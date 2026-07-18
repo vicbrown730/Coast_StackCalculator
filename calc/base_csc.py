@@ -1,6 +1,6 @@
 import operator as op
 
-from .exceptions import StackManagement, ZeroDivision
+from .exceptions import StackManagement, MathError, SyntaxFault, BaseCSCException
 
 class CoastStackCalculator():
     def __init__(self):
@@ -20,7 +20,11 @@ class CoastStackCalculator():
                 try:
                     self.ins_dict[this_token]()
                 except IndexError:
-                    raise StackManagement("栈上越界") from None
+                    raise StackManagement("栈上越界", 0) from None
+                except ValueError:
+                    raise SyntaxFault("token无法参与运算", 0) from None
+                except Exception:
+                    raise BaseCSCException("未知错误", 0)
             
             else:
                 self.stack.append(this_token)
@@ -44,7 +48,7 @@ class CoastStackCalculator():
         a = float(self.stack.pop())
         b = float(self.stack.pop())
         if a == 0:
-            raise ZeroDivision("除数为零") from None
+            raise MathError("除数为零", 0) from None
         self.stack.append(op.truediv(b, a))
         return
         
